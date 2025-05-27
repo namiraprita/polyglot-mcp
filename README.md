@@ -18,6 +18,7 @@ Polyglot is an open-source implementation of the Model Contexts Protocol (MCP) f
 - Formality level control (formal/informal)
 - Claude Sonnet 3.5 integration
 - MCP protocol server (via FastMCP)
+- API key authentication
 
 ## Installation
 
@@ -43,6 +44,15 @@ pip install .
 # For development, install with dev dependencies
 pip install ".[dev]"
 ```
+
+## Configuration
+
+1. Create a `.env` file in your project root:
+```bash
+ANTHROPIC_API_KEY=your_api_key_here
+```
+
+2. Make sure to keep your API key secure and never commit it to version control.
 
 ## Running the MCP Server
 
@@ -92,7 +102,8 @@ async def main():
                         "source_language": "fr",
                         "target_language": "en",
                         "domain": "legal",
-                        "formality": "formal"
+                        "formality": "formal",
+                        "api_key": "your_api_key_here"  # Required for authentication
                     },
                     "data": {"text": "Le contrat a été signé hier à Genève."}
                 }
@@ -117,7 +128,8 @@ The translation request follows this JSON structure:
     "source_language": "fr",
     "target_language": "en",
     "domain": "legal",
-    "formality": "formal"
+    "formality": "formal",
+    "api_key": "your_api_key_here"  // Required for authentication
   },
   "data": {
     "text": "Le contrat a été signé hier à Genève."

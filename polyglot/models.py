@@ -24,6 +24,7 @@ class TranslationMetadata(BaseModel):
     target_language: Language
     domain: Domain
     formality: Formality
+    api_key: str = Field(..., description="API key for authentication")
 
 class TranslationRequest(BaseModel):
     version: Literal["1.0"] = "1.0"

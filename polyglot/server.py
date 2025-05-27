@@ -1,9 +1,19 @@
 from mcp.server.fastmcp import FastMCP
 from .models import TranslationRequest, TranslationResponse
 from .client import PolyglotClient
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Initialize FastMCP server
 mcp = FastMCP("polyglot", port=8001)
+
+# Get API key from environment
+VALID_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+if not VALID_API_KEY:
+    raise ValueError("ANTHROPIC_API_KEY environment variable is required")
 
 client = PolyglotClient()
 
@@ -14,11 +24,18 @@ def translate(request: TranslationRequest) -> TranslationResponse:
     
     Args:
         request: TranslationRequest containing source language, target language,
-                domain, formality level and text to translate
+                domain, formality level, API key and text to translate
                 
     Returns:
         TranslationResponse containing the translated text
+        
+    Raises:
+        Exception: If API key is invalid or translation fails
     """
+    # Validate API key
+    if request.metadata.api_key != VALID_API_KEY:
+        raise Exception("Invalid API key")
+        
     try:
         return client.translate(request)
     except Exception as e:
