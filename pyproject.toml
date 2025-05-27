@@ -3,7 +3,7 @@ name = "polyglot-mcp"
 version = "1.0.0"
 description = "A Model Contexts Protocol implementation for translation services"
 authors = [
-    {name = "Your Name", email = "your.email@example.com"}
+    {name = "Namira Suniaprita", email = "namirasuniaprita07@gmail.com"}
 ]
 dependencies = [
     "anthropic>=0.8.0",
