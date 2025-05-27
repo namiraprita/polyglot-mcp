@@ -1,22 +1,39 @@
-from fastapi import FastAPI, HTTPException
+from mcp.server.fastmcp import FastMCP
 from .models import TranslationRequest, TranslationResponse
 from .client import PolyglotClient
 
-app = FastAPI(
-    title="Polyglot Translation API",
-    description="A Model Contexts Protocol implementation for translation services",
-    version="1.0.0"
-)
+# Initialize FastMCP server
+mcp = FastMCP("polyglot", port=8001)
 
 client = PolyglotClient()
 
-@app.post("/translate", response_model=TranslationResponse)
-async def translate(request: TranslationRequest) -> TranslationResponse:
+@mcp.tool()
+def translate(request: TranslationRequest) -> TranslationResponse:
+    """
+    Translate text between languages using Claude Sonnet 3.5.
+    
+    Args:
+        request: TranslationRequest containing source language, target language,
+                domain, formality level and text to translate
+                
+    Returns:
+        TranslationResponse containing the translated text
+    """
     try:
         return client.translate(request)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise Exception(f"Translation failed: {str(e)}")
 
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy"} 
+@mcp.resource("health")
+def health_check() -> str:
+    """
+    Check if the translation service is healthy.
+    
+    Returns:
+        A string indicating the service status
+    """
+    return "Service is healthy"
+
+if __name__ == "__main__":
+    # Initialize and run the server
+    mcp.run(transport='sse') 
