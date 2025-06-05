@@ -56,65 +56,46 @@ ANTHROPIC_API_KEY=your_api_key_here
 
 ## Running the MCP Server
 
-The Polyglot MCP server uses [FastMCP](https://github.com/modelcontextprotocol/python-sdk) to expose translation tools and resources over the MCP protocol (SSE transport).
-
-To start the server:
+To run the MCP server, use the following command:
 
 ```bash
-python -m polyglot.server
+uv run polyglot/server.py
 ```
 
-By default, the server will run on port 8001 using SSE transport.
+This will start the server on the configured port (default: 8001).
 
 ## Testing the MCP Server
 
-### Using MCP Inspector (Recommended)
-
-1. Install the MCP Inspector:
-   ```bash
-   npx @modelcontextprotocol/inspector
-   ```
-2. Open the Inspector UI (the terminal will show a local address).
-3. Set the following in the Inspector UI:
-   - **Transport Type:** SSE
-   - **URL:** `http://localhost:8001/sse`
-   - (Optional) Set Inspector Proxy Address if needed
-4. You can now interact with the translation tool and resources via the Inspector UI.
-
-### Using a Python MCP Client
-
-You can also interact with the server programmatically using the MCP Python SDK:
+You can test the MCP server using a simple client script. For example, to test the health check resource, create a file named `test_client.py` with the following content:
 
 ```python
-from mcp.client.sse import sse_client
-import asyncio
+import requests
 
-async def main():
-    async with sse_client(url="http://localhost:8001/sse") as (read, write):
-        # Example: call the translate tool
-        request = {
-            "tool": "translate",
-            "args": {
-                "request": {
-                    "version": "1.0",
-                    "type": "translation_request",
-                    "metadata": {
-                        "source_language": "fr",
-                        "target_language": "en",
-                        "domain": "legal",
-                        "formality": "formal",
-                        "api_key": "your_api_key_here"  # Required for authentication
-                    },
-                    "data": {"text": "Le contrat a été signé hier à Genève."}
-                }
-            }
-        }
-        await write(request)
-        response = await read()
-        print(response)
-
-asyncio.run(main())
+response = requests.get("http://localhost:8001/health")
+print(response.text)
 ```
+
+Run the test client with:
+
+```bash
+uv run test_client.py
+```
+
+You should see the output: "Service is healthy".
+
+## Environment Variables
+
+Make sure to set your Anthropic API key in a `.env` file in the project root:
+
+```
+ANTHROPIC_API_KEY=your_api_key_here
+```
+
+## Additional Notes
+
+- The server uses the Model Context Protocol (MCP) to expose tools and resources.
+- Ensure all dependencies are installed using `uv` or `pip`.
+- For more details, refer to the project documentation.
 
 ## Protocol Specification
 

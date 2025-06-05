@@ -24,6 +24,9 @@ build-backend = "hatchling.build"
 [tool.hatch.metadata]
 allow-direct-references = true
 
+[tool.hatch.build.targets.wheel]
+packages = ["polyglot"]
+
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",

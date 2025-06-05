@@ -1,6 +1,6 @@
 from mcp.server.fastmcp import FastMCP
-from .models import TranslationRequest, TranslationResponse
-from .client import PolyglotClient
+from polyglot.models import TranslationRequest, TranslationResponse
+from polyglot.client import PolyglotClient
 import os
 from dotenv import load_dotenv
 
@@ -41,7 +41,7 @@ def translate(request: TranslationRequest) -> TranslationResponse:
     except Exception as e:
         raise Exception(f"Translation failed: {str(e)}")
 
-@mcp.resource("health")
+@mcp.resource("polyglot://health")
 def health_check() -> str:
     """
     Check if the translation service is healthy.
