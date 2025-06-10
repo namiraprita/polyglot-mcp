@@ -43,4 +43,5 @@ Thumbs.db
 htmlcov/
 .pytest_cache/
 .mypy_cache/ 
-.ipynb
+.ipynbclaude_desktop_config.json
+claude_desktop_config.local.json
