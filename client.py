@@ -3,7 +3,7 @@ from typing import Optional
 import anthropic
 from dotenv import load_dotenv
 
-from polyglot.models import TranslationRequest, TranslationResponse
+from .models import TranslationRequest, TranslationResponse
 
 class PolyglotClient:
     def __init__(self, api_key: Optional[str] = None):
@@ -99,4 +99,4 @@ Please provide only the translation without any additional explanation or contex
             ]
         )
         
-        return message.content[0].text.strip()
+        return message.content[0].text.strip() 

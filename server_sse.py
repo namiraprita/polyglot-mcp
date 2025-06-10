@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Initialize FastMCP server
+# Initialize FastMCP server for SSE transport
 mcp = FastMCP("polyglot", port=8001)
 
 # Get API key from environment
@@ -52,5 +52,5 @@ def health_check() -> str:
     return "Service is healthy"
 
 if __name__ == "__main__":
-    # Initialize and run the server
+    # Initialize and run the server with SSE transport for web/API usage
     mcp.run(transport='sse') 

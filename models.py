@@ -61,4 +61,4 @@ class TranslationResponse(BaseModel):
     type: Literal["translation_response"] = "translation_response"
     metadata: TranslationMetadata
     data: dict[str, str] = Field(..., description="Contains the translated text")
-    status: str = "success"
+    status: str = "success" 
