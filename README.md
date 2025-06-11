@@ -1,11 +1,11 @@
-# Polyglot - Model Contexts Protocol for Translation
+# Polyglot - Model Context Protocol for Translation
 
-Polyglot is an open-source implementation of the Model Contexts Protocol (MCP) focused on translation services. It provides a standardized way to handle translation requests across multiple languages using Claude Sonnet 3.5.
+Polyglot is an MCP (Model Context Protocol) server that provides translation services using Claude Sonnet 3.5.
 
 ## Supported Languages
 
 - Arabic (ar)
-- Chinese (zh)
+- Chinese (zh) 
 - English (en)
 - French (fr)
 - Russian (ru)
@@ -13,129 +13,109 @@ Polyglot is an open-source implementation of the Model Contexts Protocol (MCP) f
 
 ## Features
 
-- Standardized translation request format
+- Multiple transport options (stdio, SSE)
 - Support for multiple domains (legal, medical, general)
 - Formality level control (formal/informal)
 - Claude Sonnet 3.5 integration
-- MCP protocol server (via FastMCP)
 - API key authentication
 
 ## Installation
 
-### Using uv (Recommended)
-
 ```bash
 # Install uv if you haven't already
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install the package and its dependencies
+# Install dependencies
 uv pip install .
-
-# For development, install with dev dependencies
-uv pip install ".[dev]"
-```
-
-### Using pip
-
-```bash
-# Install the package and its dependencies
-pip install .
-
-# For development, install with dev dependencies
-pip install ".[dev]"
 ```
 
 ## Configuration
 
-1. Create a `.env` file in your project root:
+Create a `.env` file in your project root:
 ```bash
 ANTHROPIC_API_KEY=your_api_key_here
 ```
 
-2. Make sure to keep your API key secure and never commit it to version control.
+## Transport Options
 
-## Running the MCP Server
+### 1. STDIO Transport (For Claude Desktop Integration)
 
-To run the MCP server, use the following command:
-
-```bash
-uv run polyglot/server.py
-```
-
-This will start the server on the configured port (default: 8001).
-
-## Testing the MCP Server
-
-You can test the MCP server using a simple client script. For example, to test the health check resource, create a file named `test_client.py` with the following content:
-
-```python
-import requests
-
-response = requests.get("http://localhost:8001/health")
-print(response.text)
-```
-
-Run the test client with:
+Use `server.py` for stdio transport:
 
 ```bash
-uv run test_client.py
+uv run server.py
 ```
 
-You should see the output: "Service is healthy".
+### 2. SSE Transport (For HTTP/Web Usage)
 
-## Environment Variables
+Use `server_sse.py` for SSE transport:
 
-Make sure to set your Anthropic API key in a `.env` file in the project root:
-
-```
-ANTHROPIC_API_KEY=your_api_key_here
+```bash
+uv run server_sse.py
 ```
 
-## Additional Notes
+This runs on port 8001 with SSE transport for web/API usage.
 
-- The server uses the Model Context Protocol (MCP) to expose tools and resources.
-- Ensure all dependencies are installed using `uv` or `pip`.
-- For more details, refer to the project documentation.
+## Testing
 
-## Protocol Specification
+### 1. With Claude Desktop (STDIO Transport)
 
-The translation request follows this JSON structure:
+Add this configuration to your Claude Desktop config:
 
 ```json
-{
-  "version": "1.0",
-  "type": "translation_request",
-  "metadata": {
-    "source_language": "fr",
-    "target_language": "en",
-    "domain": "legal",
-    "formality": "formal",
-    "api_key": "your_api_key_here"  // Required for authentication
-  },
-  "data": {
-    "text": "Le contrat a été signé hier à Genève."
+"polyglot": {
+  "command": "/usr/bin/env",
+  "args": [
+    "uv",
+    "run",
+    "/Users/namirasuniaprita/Documents/GitHub/polyglot-mcp/polyglot-mcp/start_mcp_server.py"
+  ],
+  "env": {
+    "ANTHROPIC_API_KEY": "your_api_key_here",
+    "PYTHONPATH": "/Users/namirasuniaprita/Documents/GitHub/polyglot-mcp/polyglot-mcp",
+    "PATH": "/Users/namirasuniaprita/.local/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
   }
 }
 ```
 
-## Development
+### 2. With MCP Inspector (SSE Transport)
 
-To set up the development environment:
+1. Run the SSE server:
+   ```bash
+   uv run server_sse.py
+   ```
 
-```bash
-# Install uv if you haven't already
-curl -LsSf https://astral.sh/uv/install.sh | sh
+2. Make sure you have a `.env` file with your API key
 
-# Create and activate a virtual environment
-uv venv
-source .venv/bin/activate  # On Unix/macOS
-# or
-.venv\Scripts\activate  # On Windows
+3. Use this payload for translation requests:
+   ```json
+   {
+     "version": "1.0",
+     "type": "translation_request",
+     "metadata": {
+       "source_language": "en",
+       "target_language": "fr",
+       "domain": "general",
+       "formality": "informal",
+       "api_key": "your_anthropic_api_key_here"
+     },
+     "data": {
+       "text": "Hello, how are you?"
+     }
+   }
+   ```
 
-# Install development dependencies
-uv pip install ".[dev]"
-```
+## Available Tools
+
+- `translate`: Translate text between supported languages
+- `health_check`: Check service status
+
+## Valid Values
+
+- **Languages**: `ar`, `zh`, `en`, `fr`, `ru`, `es`
+- **Domains**: `general`, `legal`, `medical`
+- **Formality**: `formal`, `informal`
 
 ## License
 
-MIT License 
+MIT License
